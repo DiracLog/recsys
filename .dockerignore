@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtual env
+.venv/
+.env
+
+# Git
+.git/
+.gitignore
+.github/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Tests & dev tooling
+tests/
+scripts/
+notebooks/
+
+# Data
+data/
+ml-1m/
+ml-32m/
+*.csv
+*.parquet
+
+# Measurements & docs
+measurements/
+docs/
+*.md
+!README.md
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Artifacts: exclude all runs except the one used in the image
+artifacts/runs/*
+!artifacts/runs/2026-04-29-152605

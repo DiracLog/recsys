@@ -1,0 +1,81 @@
+# Data configuration
+data:
+  # Paths to dataset files, getting injected/or read directly from env vars in main.py
+  ratings_path: "your_path" # ex "data/ml-1m/ratings.dat"
+  movies_path: "your_path" # ex "data/ml-1m/movies.dat"
+  users_path: "your_path" # ex "data/ml-1m/users.dat"
+  injection: true
+
+  # Dataset mode:
+  # "ml32" = MovieLens 32M
+  # adjust if using a different dataset
+  # Supported loaders for ml32/ml1
+  mode: "ml32"
+
+
+preprocessing:
+  # Minimum number of ratings per movie
+  m_threshold: 10
+
+  # Minimum number of ratings per user
+  u_threshold: 20
+
+
+models:
+
+  # Collaborative filtering (SVD-based)
+  collaborative:
+    # Number of latent factors
+    # Higher = better quality, more memory
+    k_principal: 50
+
+  # Content-based filtering
+  content:
+    # Confidence scaling, created to penalize niche movies with high ratings but few interactions
+    # value of alpha is point of half confidence(conf = 0.5, when movie has alpha interactions), beta controls steepness of curve
+    movie_conf_alpha: 5000
+    movie_conf_beta: 0.5
+
+    # User profile construction
+    profile_alpha: 0.5
+
+    # Shrinkage strategy:
+    # "bayesian" = more stable for sparse data
+    shrinkage: "bayesian"
+
+    # Whether to apply confidence weighting to movies
+    movies_conf: true
+
+  # Hybrid model (collaborative + content)
+  hybrid:
+    # Blend weight:
+    # 0.0 = pure collaborative
+    # 1.0 = pure content-based
+    weight: 0.5
+
+  # Popularity-based fallback model
+  popularity:
+    # Confidence scaling, created to penalize niche movies with high ratings but few interactions
+    # value of alpha is point of half confidence(conf = 0.5, when movie has alpha interactions), beta controls steepness of curve
+    movie_conf_alpha: 50000
+    movie_conf_beta: 0.5
+
+    # Default number of recommendations
+    default_n: 20
+
+  # Factor storage configuration
+  factors:
+    # Precision of factor matrices
+    # float16 saves memory, float32 is safer
+    dtype_mx: float16
+
+    # Index precision:
+    # uint16 supports up to 2**16 - 1 items
+    dtype_indices: uint16
+
+  # Memory handling
+  memory:
+    # Memory-mapping mode:
+    # "r" = read-only mmap (saves RAM, but carefull with changing objects -> mapping breaks)
+    # null = load fully into memory
+    mmap_mode: "r"

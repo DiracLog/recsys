@@ -1,0 +1,32 @@
+# configs/default.yaml
+data:
+  ratings_path: "data/ml-1m/ratings.dat"
+  movies_path: "data/ml-1m/movies.dat"
+  users_path: "data/ml-1m/users.dat"
+  mode: "ml32"
+  injection: true
+
+preprocessing:
+  m_threshold: 10
+  u_threshold: 20
+
+models:
+  collaborative:
+    k_principal: 50
+  content:
+    movie_conf_alpha: 5000
+    movie_conf_beta: 0.5
+    profile_alpha: 0.5
+    shrinkage: "bayesian"
+    movies_conf: true
+  hybrid:
+    weight: 0.5
+  popularity:
+    movie_conf_alpha: 50000
+    movie_conf_beta: 0.5
+    default_n: 20
+  factors:
+    dtype_mx: float16
+    dtype_indices: uint16
+  memory:
+    mmap_mode: "r"
