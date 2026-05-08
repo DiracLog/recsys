@@ -4,7 +4,7 @@ A hybrid movie recommendation system over MovieLens, built from primitives. Comb
 
 The focus is engineering, not algorithm novelty. Off-the-shelf libraries (`surprise`, `lightfm`, `implicit`) handle the math; this project foregrounds the parts they abstract away — sparse linear algebra, memory layout, deployment constraints, and validation methodology.
 
-> Live demo: deployment in progress. Will be added when public URL is available.
+> Live demo: [Movie RecSys](https://m-r-t.onrender.com/).
 
 ---
 
