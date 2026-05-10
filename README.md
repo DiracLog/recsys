@@ -1,8 +1,8 @@
 # Movie Recommender
 
-A hybrid movie recommendation system over MovieLens, built from primitives. Combines content-based similarity, collaborative filtering via sparse SVD, and Bayesian-shrunk popularity into a convex blend. FastAPI service, optimized to serve ML-32M in **190 MB cold / 223 MB warm RSS** — a 5.6× reduction from a naïve baseline.
+A hybrid movie recommendation system over MovieLens, built from primitives. Combines content-based similarity, collaborative filtering via sparse SVD, and Bayesian-shrunk popularity into a convex blend. FastAPI service, optimized to serve ML-32M in **190 MB cold / 223 MB warm RSS** - a 5.6× reduction from a naïve baseline.
 
-The focus is engineering, not algorithm novelty. Off-the-shelf libraries (`surprise`, `lightfm`, `implicit`) handle the math; this project foregrounds the parts they abstract away — sparse linear algebra, memory layout, deployment constraints, and validation methodology.
+The focus is engineering, not algorithm novelty. Off-the-shelf libraries (`surprise`, `lightfm`, `implicit`) handle the math; this project foregrounds the parts they abstract away - sparse linear algebra, memory layout, deployment constraints, and validation methodology.
 
 > Live demo: [Movie RecSys](https://m-r-t.onrender.com/).
 
@@ -58,22 +58,22 @@ The optimization arc reduced post-load RSS by **5.6×**, validated for recommend
 
 | Stage | RSS | Δ | What changed |
 |---|---|---|---|
-| Original | 1066 MB | — | Naïve dense matrices, view-pinning bugs |
+| Original | 1066 MB | - | Naïve dense matrices, view-pinning bugs |
 | Sparse + flat indices | 484 MB | −582 | CSR layout, `ascontiguousarray` to break view pins |
 | Polars + dependency cleanup | 433 MB | −51 | Polars in data layer, dropped pandas + sklearn |
 | float32 + uint16 (Blocks 5+6) | 315 MB | −118 | Half-precision factors, narrow indices |
 | float16 (Block 7) | 287 MB | −28 | Quarter-precision factors |
-| **mmap (Block 8) — cold** | **190 MB** | −97 | File-backed factor arrays |
-| mmap warm (100 distinct users) | 223 MB | — | Working set under load |
+| **mmap (Block 8) - cold** | **190 MB** | −97 | File-backed factor arrays |
+| mmap warm (100 distinct users) | 223 MB | - | Working set under load |
 
-**Validation:** at each precision step, top-N recommendation overlap was measured against a float64 baseline on real ML-32M data. Float16 maintained 99.4% top-10 overlap — well above the 0.95 ship threshold.
+**Validation:** at each precision step, top-N recommendation overlap was measured against a float64 baseline on real ML-32M data. Float16 maintained 99.4% top-10 overlap - well above the 0.95 ship threshold.
 
 ### Component breakdown (final state)
 
 | Component | Size | Shape | Dtype |
 |---|---|---|---|
-| Python + deps baseline | 101 MB | — | — |
-| catalog (Polars, dict) | 9.6 MB | — | — |
+| Python + deps baseline | 101 MB | - | - |
+| catalog (Polars, dict) | 9.6 MB | - | - |
 | content.user_profiles | 7.5 MB | (195544, 20) | float16 |
 | content.rated_indices_ | 60.5 MB | (31720336,) | uint16 |
 | collab.U | 18.6 MB | (195544, 50) | float16 |
@@ -92,7 +92,7 @@ The optimization work followed a pattern that mattered as much as the result:
 1. **Measure first.** Each block began with a baseline benchmark logged to `measurements/benchmarks.md`.
 2. **Hypothesize the source.** Component-by-component sizing via `pympler.asizeof` and `tracemalloc`, not guesswork.
 3. **Implement on a dedicated branch.** One block per branch, merged through `perf/optimization` before landing on `main`.
-4. **Validate output.** Recommendation quality preserved via top-N overlap tests on real data — not synthetic toy fixtures.
+4. **Validate output.** Recommendation quality preserved via top-N overlap tests on real data - not synthetic toy fixtures.
 5. **Decide based on numbers.** Some blocks (Block 7 float16) were validated and shipped; others (aggressive filtering) were scoped out as future work.
 
 The full block-by-block git history on `main` documents the trajectory.
@@ -122,7 +122,7 @@ Off-the-shelf recommender libraries handle the math elegantly. They abstract awa
 - **Hybrid blending:** convex combination of content + collaborative + Bayesian-shrunk popularity, not provided by any single library off-the-shelf.
 - **Cold-start fold-in:** new users get content-based profiles built on the fly; `surprise.predict` requires users in the training set.
 - **Production serving:** `surprise` isn't a service. The FastAPI layer, dependency injection, and lifespan management are project-specific.
-- **Deploy constraints:** mmap, float16 validation, uint16 indices — none of these are library decisions; they're engineering decisions made under a 256 MB target.
+- **Deploy constraints:** mmap, float16 validation, uint16 indices - none of these are library decisions; they're engineering decisions made under a 256 MB target.
 
 For a quick baseline on small data, use `surprise`. For understanding what those abstractions hide, build it.
 
@@ -211,7 +211,7 @@ Features deferred to keep scope contained:
 
 - **1-10 rating scale with half-step input.** Frontend-only conversion to internal 1-5 scale.
 - **Anime dataset support.** Demonstrates data-layer extensibility; reuses preprocessor and training pipeline.
-- **External rating sync (IMDB CSV import).** Adds personalization without auth/DB complexity. Full OAuth integration with Shikimori or similar deferred indefinitely — DB and auth work has high cost relative to portfolio signal.
+- **External rating sync (IMDB CSV import).** Adds personalization without auth/DB complexity. Full OAuth integration with Shikimori or similar deferred indefinitely - DB and auth work has high cost relative to portfolio signal.
 - **Aggressive filtering.** Drop users with <5 ratings and movies with <10 ratings for further memory reduction. Compounds with everything above.
 
 ---
